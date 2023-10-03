@@ -4,10 +4,9 @@ import pytube.exceptions
 import json
 import os
 import pathvalidate
+import requests
 
-#removes illegal characters from file names
-def filename_purifier(path):
-    return pathvalidate.sanitize_filepath(path)
+FLAG_USE_API = True
 
 FILENAME_SONGS_FOLDER = "songs"
 FILENAME_ERROR_LOG = "error_log.json"
@@ -18,6 +17,19 @@ PATH_SONGS_JSON = os.path.join(PATH_SCRIPT_FOLDER, FILENAME_SONGS_JSON)
 PATH_ERROR_LOGS = os.path.join(PATH_SCRIPT_FOLDER, FILENAME_ERROR_LOG)
 PATH_WIN_SONGS_DIR = os.path.join("C:\\Users\\",os.getlogin(),"Music")
 PATH_SONGS_DIR = ""
+
+#removes illegal characters from file names
+def filename_purifier(path):
+    return pathvalidate.sanitize_filepath(path)
+
+def get_songs():
+    if FLAG_USE_API:
+        return json.loads(requests.get("https://padurarudanutrazvan.altervista.org/api/v1/music-manager/song/get.php").text)
+    
+    with open(PATH_SONGS_JSON, encoding="utf-8") as file:
+        return json.load(file)
+
+a = get_songs()
 
 downloaded_songs = []
 songs = []
@@ -36,9 +48,6 @@ print("Downloading in: "+ PATH_SONGS_DIR)
 
 for song in [song for song in os.listdir(PATH_SONGS_DIR) if song.endswith(".mp3")]:
     downloaded_songs.append(song.removesuffix(".mp3"))
-
-with open(PATH_SONGS_JSON, encoding="utf-8") as file:
-    songs = json.load(file)
 
 for song in songs:
     title = filename_purifier(song["title"])
