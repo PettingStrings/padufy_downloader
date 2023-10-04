@@ -29,10 +29,8 @@ def get_songs():
     with open(PATH_SONGS_JSON, encoding="utf-8") as file:
         return json.load(file)
 
-a = get_songs()
-
 downloaded_songs = []
-songs = []
+songs = get_songs()
 error_logs = []
 
 #If not on windows, set songs folder path in same script dir
