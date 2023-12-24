@@ -30,13 +30,10 @@ def get_songs():
 
     return {utils.filename_purifier(item["title"]):item["link"] for item in json_data}
 
-def prova(data):
-    print(data)
-
-def download(full_path,link, ytdlopt=YTDLP_DEFAULT_OPTIONS, logger=None, hooks=None):
+def download(full_path,link, ytdlopt=YTDLP_DEFAULT_OPTIONS, logger=None, download_hooks=None, post_hooks=None):
     ytdlopt["outtmpl"] = full_path
     ytdlopt["logger"] = logger
-    ytdlopt["progress_hooks"] = hooks
-    ytdlopt["postprocessor_hooks"] = [prova]
+    ytdlopt["progress_hooks"] = download_hooks
+    ytdlopt["postprocessor_hooks"] = post_hooks
     with yt_dlp.YoutubeDL(ytdlopt) as ydl:
         ydl.download([link])
